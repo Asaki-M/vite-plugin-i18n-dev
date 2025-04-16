@@ -43,7 +43,10 @@
   "scripts": {
     "build": "rimraf dist && unbuild",
     "dev": "npm run build --watch",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "client:dev": "pnpm --filter client dev",
+    "client:build": "pnpm --filter client build",
+    "client:preview": "pnpm --filter client preview"
   },
   "engines": {
     "node": ">=14"
@@ -61,8 +64,8 @@
     "@types/node": "^22.7.5",
     "rimraf": "^6.0.1",
     "tsup": "^8.2.4",
-    "typescript": "^5.6.3",
+    "typescript": "^5.7.2",
     "unbuild": "^2.0.0",
-    "vite": "^5.4.4"
+    "vite": "^6.3.0"
   }
 }

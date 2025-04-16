@@ -2,8 +2,7 @@ import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
   entries: [
-    'src/index',
-    'src/nuxt',
+    'src/index'
   ],
   clean: false,
   declaration: true,
