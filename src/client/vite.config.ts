@@ -1,10 +1,25 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { resolve } from 'path'
+import { resolve, join } from 'path'
+import tailwindcss from '@tailwindcss/vite'
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
 
-// 使用pnpm workspace方式共享根目录的vite和typescript依赖
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    tailwindcss(),
+    AutoImport({
+      dts: join(__dirname, 'auto-imports.d.ts'),
+      imports: [
+        'vue',
+      ],
+    }),
+    Components({
+      dirs: ['./src/components'],
+      dts: join(__dirname, 'components.d.ts'),
+    }),
+  ],
   resolve: {
     alias: {
       '@': resolve(__dirname, './src')
