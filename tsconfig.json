@@ -3,18 +3,19 @@
     "target": "es2018",
     "jsx": "preserve",
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
-    "module": "node16",
-    "moduleResolution": "nodenext", 
+    "module": "esnext",
+    "moduleResolution": "node", 
     "resolveJsonModule": true,
     "strict": true,
     "strictNullChecks": true,
     "noEmit": true,
     "esModuleInterop": true,
     "skipDefaultLibCheck": true,
-    "skipLibCheck": true,
-    "types": ["vite/client", "node"]
+    "skipLibCheck": true
   },
   "exclude": [
-    "examples"
+    "examples",
+    "src/client",
+    "dist"
   ]
 }

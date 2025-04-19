@@ -1,8 +1,12 @@
 {
   "files": [],
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": true
+  },
   "references": [
     {
       "path": "./tsconfig.app.json"
     }
-  ],
+  ]
 }

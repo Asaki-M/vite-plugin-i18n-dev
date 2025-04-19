@@ -57,7 +57,8 @@
     }
   },
   "dependencies": {
-    "fast-glob": "^3.3.2"
+    "fast-glob": "^3.3.2",
+    "sirv": "^3.0.1"
   },
   "devDependencies": {
     "@nuxt/kit": "^3.14.0",

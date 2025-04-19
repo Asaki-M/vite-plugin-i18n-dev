@@ -5,7 +5,7 @@
     "target": "es2015",
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "outDir": "../../dist/client",
     "sourceMap": true,
     /* Linting */
@@ -14,11 +14,15 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "skipLibCheck": true
-  },
-  "baseUrl": ".",
-  "paths": {
-    "@/*": ["./src/*"]
+    "skipLibCheck": true,
+    "noEmit": false,
+    "composite": true,
+    "incremental": true,
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": [
     "src/**/*.ts",
