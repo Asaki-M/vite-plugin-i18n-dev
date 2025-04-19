@@ -24,5 +24,16 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, './src')
     }
-  }
+  },
+  build: {
+    target: 'esnext',
+    minify: true, // 'esbuild',
+    emptyOutDir: true,
+    outDir: resolve(__dirname, '../../dist/client'),
+    rollupOptions: {
+      output: {
+        manualChunks: undefined
+      }
+    }
+  },
 })

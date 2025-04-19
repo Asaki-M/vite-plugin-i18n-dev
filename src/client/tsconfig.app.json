@@ -2,12 +2,19 @@
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "resolveJsonModule": true,
+    "target": "es2015",
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "outDir": "../../dist/client",
+    "sourceMap": true,
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "skipLibCheck": true
   },
   "baseUrl": ".",
   "paths": {
@@ -18,5 +25,9 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "auto-imports.d.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
   ]
 }

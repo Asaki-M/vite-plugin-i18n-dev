@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { TreeItem } from './components/TreeJSON/index.d'
 import { formatJsonToTreeItems } from './utils'
-import enUS from '@/assets/en-US.json'
-import zhCN from '@/assets/zh-CN.json'
-console.log(enUS)
+// import enUS from '@/assets/en-US.json'
+// import zhCN from '@/assets/zh-CN.json'
 
+const enUS = {}, zhCN = {}
 const activeTab = ref<string>('tab1');
 const items = ref<TreeItem[]>(formatJsonToTreeItems(enUS))
 
