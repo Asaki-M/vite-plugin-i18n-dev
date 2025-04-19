@@ -1,30 +1,37 @@
 <script setup lang="ts">
+import type { TreeItem } from './components/TreeJSON/index.d'
+import { formatJsonToTreeItems } from './utils'
+import enUS from '@/assets/en-US.json'
+import zhCN from '@/assets/zh-CN.json'
+console.log(enUS)
+
 const activeTab = ref<string>('tab1');
-console.log(activeTab)
+const items = ref<TreeItem[]>(formatJsonToTreeItems(enUS))
+
+watch(activeTab, (newVal) => {
+  if (newVal === 'tab1') {
+    items.value = formatJsonToTreeItems(enUS)
+  } else {
+    items.value = formatJsonToTreeItems(zhCN)
+  }
+})
+
 </script>
 
 <template>
   <div class="p-8 flex flex-col gap-4">
-    <Input />
-
-    <Textarea />
 
     <Tabs v-model="activeTab" :items="[
       {
         value: 'tab1',
-        label: '标签1',
-        content: '标签1的内容'
+        label: 'en-US',
       },
       {
         value: 'tab2',
-        label: '标签2',
-        content: '标签2的内容'
-      },
-      {
-        value: 'tab3',
-        label: '标签3',
-        content: '标签3的内容'
+        label: 'zh-CN',
       }
     ]" />
+
+    <TreeJSON :tree-data="items" />
   </div>
 </template>

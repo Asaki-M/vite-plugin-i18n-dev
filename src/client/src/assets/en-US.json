@@ -1,0 +1,51 @@
+{
+  "greeting": "Hello",
+  "farewell": "Goodbye",
+  "thank_you": "Thank you",
+  "welcome": "Welcome",
+  "error": {
+    "not_found": "Not Found",
+    "server_error": "Server Error",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Forbidden",
+    "timeout": "Request Timeout",
+    "conflict": "Conflict"
+  },
+  "button": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "update": "Update",
+    "edit": "Edit",
+    "view": "View"
+  },
+  "form": {
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "confirm_password": "Confirm Password",
+    "address": "Address",
+    "phone": "Phone"
+  },
+  "message": {
+    "loading": "Loading...",
+    "success": "Operation successful",
+    "failure": "Operation failed",
+    "welcome_back": "Welcome back",
+    "good_morning": "Good morning",
+    "good_night": "Good night"
+  },
+  "navigation": {
+    "home": "Home",
+    "about": "About Us",
+    "contact": "Contact Us",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "footer": {
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "help": "Help Center"
+  }
+}
