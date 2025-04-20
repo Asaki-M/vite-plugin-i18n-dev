@@ -26,6 +26,9 @@ export class VitepluginI18nDevContext {
     this.server = server;
     this.dirs = dirs;
     VitepluginI18nDevContext.instance = this;
+
+    this.watchChangeI18nDataForKey()
+    this.watchChangeI18nDataForValue()
   }
 
   async initI18nData(root: string) {
@@ -74,6 +77,20 @@ export class VitepluginI18nDevContext {
 
   private sendDataToClient(key: string, data: unknown) {
     this.server.ws.send(`${VITE_PLUGIN_I18N_DEV_KEY_PREFIX}:${key}`, JSON.stringify(data))
+  }
+
+  private watchChangeI18nDataForKey() {
+    this.server.ws.on(`${VITE_PLUGIN_I18N_DEV_KEY_PREFIX}:changeI18nDataForKey`, (data: unknown) => {
+      const { fullKey, value, activeTab, activePrimaryTab } = data as { fullKey: string, value: string, activeTab: string, activePrimaryTab: string }
+      console.log(fullKey, value, 'test')
+    })
+  }
+
+  private watchChangeI18nDataForValue() {
+    this.server.ws.on(`${VITE_PLUGIN_I18N_DEV_KEY_PREFIX}:changeI18nDataForValue`, (data: unknown) => {
+      const { fullKey, value, activeTab, activePrimaryTab } = data as { fullKey: string, value: string, activeTab: string, activePrimaryTab: string }
+      console.log(fullKey, value, 'test')
+    })
   }
 }
 

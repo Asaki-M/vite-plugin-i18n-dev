@@ -26,6 +26,11 @@ export default defineConfig({
           name: 'i18n',
           en: '/src/locales/en-US.json',
           zh: '/src/locales/zh-CN.json',
+        },
+        {
+          name: 'menu',
+          en: '/src/locales/en-US.menu.json',
+          zh: '/src/locales/zh-CN.menu.json',
         }
       ]
     }),
