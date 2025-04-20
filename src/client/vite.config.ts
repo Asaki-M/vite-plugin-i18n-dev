@@ -20,7 +20,15 @@ export default defineConfig({
       dirs: ['./src/components'],
       dts: join(__dirname, 'components.d.ts'),
     }),
-    VitePluginI18nDev(),
+    VitePluginI18nDev({
+      dirs: [
+        {
+          name: 'i18n',
+          en: '/src/locales/en-US.json',
+          zh: '/src/locales/zh-CN.json',
+        }
+      ]
+    }),
   ],
   resolve: {
     alias: {

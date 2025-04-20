@@ -1,13 +1,26 @@
-import type { Plugin } from 'vite'
+import type { Plugin, ResolvedConfig } from 'vite'
 import sirv from 'sirv'
-import { DIR_CLIENT } from './dir'
 import { bold, green, cyan } from 'kolorist'
+import { DIR_CLIENT } from './dir'
+import { VitepluginI18nDevContext } from './context'
+interface VitepluginI18nDevOptions {
+  /**
+   * 国际化文件目录
+   */
+  dirs: {
+    [key: string]: string
+  }[]
+}
 
-function VitepluginI18nDev(): Plugin {
+function VitepluginI18nDev(options: VitepluginI18nDevOptions): Plugin {
+  let config: ResolvedConfig
 
   return {
     name: 'vite-plugin-i18n-dev',
     apply: 'serve',
+    configResolved(resolvedConfig) {
+      config = resolvedConfig
+    },
     configureServer(server) {
       const base = (server.config.base) || '/'
       server.middlewares.use(`${base}__i18n__dev`, sirv(DIR_CLIENT, {
@@ -15,6 +28,10 @@ function VitepluginI18nDev(): Plugin {
         dev: true,
       }))
 
+      const context = new VitepluginI18nDevContext(server, options.dirs)
+      server.ws.on('connection', () => {
+        context.initI18nData(config.root)
+      })
 
       const _printUrls = server.printUrls
       const colorUrl = (url: string) =>

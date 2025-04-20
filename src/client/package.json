@@ -19,6 +19,7 @@
     "@vue/tsconfig": "^0.7.0",
     "unplugin-auto-import": "^19.1.2",
     "unplugin-vue-components": "^28.5.0",
+    "vite-hot-client": "^2.0.4",
     "vue-tsc": "^2.2.8"
   }
 }
