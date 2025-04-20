@@ -4,6 +4,7 @@ import { resolve, join } from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
+import VitePluginI18nDev from '../'
 
 export default defineConfig({
   plugins: [
@@ -19,6 +20,7 @@ export default defineConfig({
       dirs: ['./src/components'],
       dts: join(__dirname, 'components.d.ts'),
     }),
+    VitePluginI18nDev(),
   ],
   resolve: {
     alias: {
