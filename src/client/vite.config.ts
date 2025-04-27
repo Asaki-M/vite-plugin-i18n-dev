@@ -7,6 +7,7 @@ import Components from 'unplugin-vue-components/vite'
 // import VitePluginI18nDev from '../'
 
 export default defineConfig({
+  base: './',
   plugins: [
     vue(),
     tailwindcss(),

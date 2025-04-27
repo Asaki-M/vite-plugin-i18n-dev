@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-i18n-dev",
   "type": "module",
-  "version": "1.0.0",
+  "version": "0.0.1-beta-3",
   "description": "",
   "author": "Qinghuan <qinghuanhu@gmail.com>",
   "license": "MIT",
