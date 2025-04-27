@@ -28,12 +28,17 @@ const emit = defineEmits<{
 }>()
 
 const isEditing = ref(false);
-const originalValue = ref(props.modelValue);
+const textareaValue = ref(props.modelValue);
+
+watch(() => props.modelValue, (newVal) => {
+  textareaValue.value = newVal;
+});
 
 const handleInput = (e: Event) => {
-  const value = (e.target as HTMLTextAreaElement).value
-  emit('update:modelValue', value)
-  emit('change', value)
+  const value = (e.target as HTMLTextAreaElement).value;
+  textareaValue.value = value;
+  emit('update:modelValue', value);
+  emit('change', value);
 }
 
 const handleFocus = (e: FocusEvent) => {
@@ -42,33 +47,45 @@ const handleFocus = (e: FocusEvent) => {
 
 const handleBlur = (e: FocusEvent) => {
   emit('blur', e)
-  emit('update:modelValue', originalValue.value);
+  emit('update:modelValue', textareaValue.value);
   isEditing.value = false;
 }
 
 const handleEnter = (e: KeyboardEvent) => {
+  const target = e.target as HTMLTextAreaElement;
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault();
-    emit('enter', props.modelValue);
-    originalValue.value = props.modelValue;
+    emit('enter', target.value);
+    textareaValue.value = target.value;
     isEditing.value = false;
   } else if (e.key === 'Escape') {
     isEditing.value = false;
-    emit('update:modelValue', originalValue.value);
+    textareaValue.value = props.modelValue;
+    emit('update:modelValue', props.modelValue);
   }
 }
 
 const toggleEdit = () => {
   isEditing.value = !isEditing.value;
-  originalValue.value = props.modelValue;
+  textareaValue.value = props.modelValue;
 }
 </script>
 
 <template>
   <div @dblclick="toggleEdit" class="w-full">
-    <textarea v-if="isEditing" class="bg-slate-100 rounded-md p-2 focus:border-0 outline-0 w-full" :value="modelValue"
-      :placeholder="placeholder" :disabled="disabled" :maxlength="maxlength" :readonly="readonly" :rows="rows"
-      :cols="cols" autofocus @input="handleInput" @focus="handleFocus" @blur="handleBlur" @keydown="handleEnter" />
-    <span v-else>{{ modelValue }}</span>
+    <textarea v-if="isEditing" class="bg-slate-100 rounded-md p-2 focus:border-0 outline-0 w-full" 
+      :value="textareaValue"
+      :placeholder="placeholder" 
+      :disabled="disabled" 
+      :maxlength="maxlength" 
+      :readonly="readonly" 
+      :rows="rows"
+      :cols="cols" 
+      autofocus 
+      @input="handleInput" 
+      @focus="handleFocus" 
+      @blur="handleBlur" 
+      @keydown="handleEnter" />
+    <span v-else>{{ textareaValue }}</span>
   </div>
 </template>

@@ -3,12 +3,16 @@ import sirv from 'sirv'
 import { bold, green, cyan } from 'kolorist'
 import { DIR_CLIENT } from './dir'
 import { VitepluginI18nDevContext } from './context'
-interface VitepluginI18nDevOptions {
+
+export interface VitepluginI18nDevOptions {
   /**
    * 国际化文件目录
    */
   dirs: {
-    [key: string]: string
+    name: string;
+    locales: {
+      [key: string]: string
+    }
   }[]
 }
 

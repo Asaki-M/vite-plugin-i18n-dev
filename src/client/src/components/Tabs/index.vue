@@ -5,7 +5,7 @@ interface Props {
   items: Array<{
     value: string
     label: string
-    content: string
+    content?: string
   }>
 }
 

@@ -24,20 +24,24 @@ export default defineConfig({
       dirs: [
         {
           name: 'i18n',
-          en: '/src/locales/en-US.json',
-          zh: '/src/locales/zh-CN.json',
+          locales: {
+            en: '/src/locales/en-US.json',
+            zh: '/src/locales/zh-CN.json',
+          }
         },
         {
           name: 'menu',
-          en: '/src/locales/en-US.menu.json',
-          zh: '/src/locales/zh-CN.menu.json',
+          locales: {
+            en: '/src/locales/en-US.menu.json',
+            zh: '/src/locales/zh-CN.menu.json',
+          }
         }
       ]
     }),
   ],
   resolve: {
     alias: {
-      '@': resolve(__dirname, './src')
+      '@': resolve(__dirname, './src'),
     }
   },
   build: {
