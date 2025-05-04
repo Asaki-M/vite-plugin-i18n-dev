@@ -31,6 +31,8 @@ export class VitepluginI18nDevContext {
 
     this.watchChangeI18nDataForKey()
     this.watchChangeI18nDataForValue()
+    this.watchDeleteI18nDataForKey()
+    this.watchAddNewKey()
   }
 
   async initI18nData(root: string) {
@@ -118,7 +120,41 @@ export class VitepluginI18nDevContext {
       }
     })
   }
-}
 
+  private watchDeleteI18nDataForKey() {
+    this.server.ws.on(`${VITE_PLUGIN_I18N_DEV_KEY_PREFIX}:deleteI18nDataForKey`, async (data: unknown) => {
+      const { fullKey, activePrimaryTab } = data as { fullKey: string, activePrimaryTab: string }
+
+      const localPathItem = this.dirs.find(dir => dir.name === activePrimaryTab)
+      if (localPathItem) {
+        const localesKeys = Object.keys(localPathItem.locales)
+        for (const locale of localesKeys) {
+          const localPath = path.join(this.root, localPathItem.locales[locale])
+          const jsonData = await this.getI18nData(localPath)
+          deleteByPath(jsonData, fullKey);
+          await this.writeI18nData(localPath, jsonData)
+        }
+      }
+    })
+  }
+
+  private watchAddNewKey() {
+    this.server.ws.on(`${VITE_PLUGIN_I18N_DEV_KEY_PREFIX}:addNewKey`, async (data: unknown) => {
+      const { localeValues, fullKey, activePrimaryTab } = data as { localeValues: Record<string, string>, fullKey: string, activePrimaryTab: string }
+
+      const localPathItem = this.dirs.find(dir => dir.name === activePrimaryTab)
+      if (localPathItem) {
+        const localesKeys = Object.keys(localPathItem.locales)
+        for (const locale of localesKeys) {
+          const localPath = path.join(this.root, localPathItem.locales[locale])
+          const jsonData = await this.getI18nData(localPath)
+          const value = localeValues[locale]
+          changeByPath(jsonData, fullKey, value)
+          await this.writeI18nData(localPath, jsonData)
+        }
+      }
+    })
+  }
+}
 
 

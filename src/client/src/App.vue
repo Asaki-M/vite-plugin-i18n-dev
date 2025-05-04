@@ -66,14 +66,27 @@ const handleValueEnter = (fullKey: string, locale: string, value: string) => {
   })
 }
 
+const handleDeleteTreeItem = (fullKey: string) => {
+  hotContext.value?.send(`${VITE_PLUGIN_I18N_DEV_KEY_PREFIX}:deleteI18nDataForKey`, {
+    fullKey,
+    activePrimaryTab: activePrimaryTab.value,
+  })
+}
+
+const handleAddNewKey = (fullKey: string, localeValues: Record<string, string>) => {
+  hotContext.value?.send(`${VITE_PLUGIN_I18N_DEV_KEY_PREFIX}:addNewKey`, {
+    fullKey,
+    localeValues,
+    activePrimaryTab: activePrimaryTab.value,
+  })
+}
 </script>
 
 <template>
   <div class="p-8 flex flex-col gap-4">
     <Tabs v-model="activePrimaryTab" :items="primaryTabs" />
 
-    <!-- <Tabs v-model="activeTab" :items="tabs" /> -->
-
-    <TreeJSON :tree-data="treeItems" @keyEnter="handleKeyEnter" @valueEnter="handleValueEnter" />
+    <TreeJSON :tree-data="treeItems" @keyEnter="handleKeyEnter" @valueEnter="handleValueEnter"
+      @delete="handleDeleteTreeItem" @addNewKey="handleAddNewKey" />
   </div>
 </template>

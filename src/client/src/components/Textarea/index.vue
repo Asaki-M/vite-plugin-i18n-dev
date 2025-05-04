@@ -37,6 +37,7 @@ watch(() => props.modelValue, (newVal) => {
 const handleInput = (e: Event) => {
   const value = (e.target as HTMLTextAreaElement).value;
   textareaValue.value = value;
+  isEditing.value = true;
   emit('update:modelValue', value);
   emit('change', value);
 }
@@ -73,19 +74,10 @@ const toggleEdit = () => {
 
 <template>
   <div @dblclick="toggleEdit" class="w-full">
-    <textarea v-if="isEditing" class="bg-slate-100 rounded-md p-2 focus:border-0 outline-0 w-full" 
-      :value="textareaValue"
-      :placeholder="placeholder" 
-      :disabled="disabled" 
-      :maxlength="maxlength" 
-      :readonly="readonly" 
-      :rows="rows"
-      :cols="cols" 
-      autofocus 
-      @input="handleInput" 
-      @focus="handleFocus" 
-      @blur="handleBlur" 
-      @keydown="handleEnter" />
+    <textarea v-if="isEditing || textareaValue === '' || textareaValue === undefined || textareaValue === null"
+      class="bg-slate-100 rounded-md p-2 focus:border-0 outline-0 w-full" :value="textareaValue"
+      :placeholder="placeholder" :disabled="disabled" :maxlength="maxlength" :readonly="readonly" :rows="rows"
+      :cols="cols" autofocus @input="handleInput" @focus="handleFocus" @blur="handleBlur" @keydown="handleEnter" />
     <span v-else>{{ textareaValue }}</span>
   </div>
 </template>

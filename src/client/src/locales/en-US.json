@@ -1,7 +1,6 @@
 {
-  "greeting": "Hello",
+  "greeting": "111123",
   "farewell": "Goodbye",
-  "thank_you": "Thank you",
   "welcome": "Welcome",
   "error": {
     "not_found": "Not Found",
@@ -9,7 +8,8 @@
     "unauthorized": "Unauthorized",
     "forbidden": "Forbidden",
     "timeout": "Request Timeout",
-    "conflict": "Conflict"
+    "conflict": "Conflict",
+    "test": "test"
   },
   "button": {
     "submit": "Submit",

@@ -1,7 +1,6 @@
 {
-  "greeting": "你好",
+  "greeting": "123213124",
   "farewell": "再见",
-  "thank_you": "谢谢",
   "welcome": "欢迎",
   "error": {
     "not_found": "未找到",
@@ -9,7 +8,8 @@
     "unauthorized": "未授权",
     "forbidden": "禁止访问",
     "timeout": "请求超时",
-    "conflict": "冲突"
+    "conflict": "冲突",
+    "test": "测试"
   },
   "button": {
     "submit": "提交",

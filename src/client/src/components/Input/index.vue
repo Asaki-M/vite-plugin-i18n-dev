@@ -32,6 +32,7 @@ const originalValue = ref(props.modelValue);
 
 const handleInput = (e: Event) => {
   const value = (e.target as HTMLInputElement).value
+  isEditing.value = true;
   emit('update:modelValue', value)
   emit('change', value)
 }
@@ -66,7 +67,7 @@ const toggleEdit = () => {
 
 <template>
   <div @dblclick="toggleEdit" class="w-full">
-    <input v-if="isEditing" class="bg-slate-100 rounded-md p-2 focus:border-0 outline-0 w-full" :value="modelValue"
+    <input v-if="isEditing || modelValue === '' || modelValue === undefined || modelValue === null" class="bg-slate-100 rounded-md p-2 focus:border-0 outline-0 w-full" :value="modelValue"
       :type="type" :placeholder="placeholder" :disabled="disabled" :maxlength="maxlength" :readonly="readonly" autofocus
       @input="handleInput" @focus="handleFocus" @blur="handleBlur" @keydown="handleEnter" />
     <div class="w-full" v-else>{{ modelValue }}</div>

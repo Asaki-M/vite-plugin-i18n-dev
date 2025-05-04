@@ -8,10 +8,12 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AddNewKeyDialog: typeof import('./src/components/AddNewKeyDialog/index.vue')['default']
     Divider: typeof import('./src/components/Divider/index.vue')['default']
     Input: typeof import('./src/components/Input/index.vue')['default']
     Tabs: typeof import('./src/components/Tabs/index.vue')['default']
     Textarea: typeof import('./src/components/Textarea/index.vue')['default']
+    Tooltip: typeof import('./src/components/Tooltip/index.vue')['default']
     TreeJSON: typeof import('./src/components/TreeJSON/index.vue')['default']
   }
 }
