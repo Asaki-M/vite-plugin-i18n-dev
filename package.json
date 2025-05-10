@@ -1,18 +1,20 @@
 {
   "name": "vite-plugin-i18n-dev",
   "type": "module",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.0.2",
+  "description": "Vite plugin for i18n development, help you to change locale file and see the change effect in real time.",
   "author": "Qinghuan <qinghuanhu@gmail.com>",
   "license": "MIT",
-  "homepage": "",
+  "homepage": "https://github.com/Asaki-M/vite-plugin-i18n-dev",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/Asaki-M/vite-plugin-i18n-dev"
   },
   "keywords": [
     "vite",
-    "vite-plugin"
+    "vite-plugin",
+    "i18n",
+    "i18n-dev"
   ],
   "main": "dist/index.cjs",
   "module": "dist/index.js",
