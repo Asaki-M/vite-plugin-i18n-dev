@@ -43,10 +43,20 @@ export default defineConfig({
 })
 
 ```
+|  Props   | Required | Description  |
+|  ----  | ----  | ----  |
+| dirs  | true | locales file path, support multipule locales file, need to set a Array |
+| flatKey  | false | call the plugin locale file use flat key. If your locale file use "global.key: value", you need to set true. |
+---
 
 Start your project and open `http://localhost:3000/__i18n__dev/`, now you can modify, add and delete your locales in broswer page.
 
 
 ### TODO:
- - Add Virtual TreeItem to resolve large data
- - Fix no match key change
+feat: 
+ - Add Virtual List to resolve large data
+ - Add translate api to synchronous input locale value(maybe support youdao and google)
+ 
+ perf:
+ - Sort tree data by child
+ - Fixed add new key action position
