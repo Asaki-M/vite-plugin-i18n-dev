@@ -19,14 +19,15 @@ export class VitepluginI18nDevContext {
   private dirs: VitepluginI18nDevOptions['dirs'] = [];
   private root: string = '';
   public tabs: Tab[] = [];
-
-  constructor(server: ViteDevServer, dirs: VitepluginI18nDevOptions['dirs']) {
+  private flatKey: VitepluginI18nDevOptions['flatKey'] = false;
+  constructor(server: ViteDevServer, dirs: VitepluginI18nDevOptions['dirs'], flatKey: VitepluginI18nDevOptions['flatKey']) {
     if (VitepluginI18nDevContext.instance) {
       return VitepluginI18nDevContext.instance;
     }
 
     this.server = server;
     this.dirs = dirs;
+    this.flatKey = flatKey;
     VitepluginI18nDevContext.instance = this;
 
     this.watchChangeI18nDataForKey()
@@ -95,11 +96,19 @@ export class VitepluginI18nDevContext {
         for (const locale of localesKeys) {
           const localPath = path.join(this.root, localPathItem.locales[locale])
           const jsonData = await this.getI18nData(localPath)
-          const deleteValue = deleteByPath(jsonData, fullKey);
-          const newFullKey = fullKey.split(".");
-          newFullKey.pop();
-          newFullKey.push(value);
-          changeByPath(jsonData, newFullKey.join("."), deleteValue);
+
+          if (this.flatKey) {
+            const oldValue = jsonData[fullKey]
+            delete jsonData[fullKey]
+            jsonData[value] = oldValue
+          } else {
+            const deleteValue = deleteByPath(jsonData, fullKey);
+            const newFullKey = fullKey.split(".");
+            newFullKey.pop();
+            newFullKey.push(value);
+            changeByPath(jsonData, newFullKey.join("."), deleteValue);
+          }
+          
           await this.writeI18nData(localPath, jsonData)
         }
       }
@@ -115,7 +124,11 @@ export class VitepluginI18nDevContext {
         const localPath = path.join(this.root, localPathItem.locales[locale])
 
         const jsonData = await this.getI18nData(localPath)
-        changeByPath(jsonData, fullKey, value)
+        if (this.flatKey) {
+          jsonData[fullKey] = value
+        } else {
+          changeByPath(jsonData, fullKey, value)
+        }
         await this.writeI18nData(localPath, jsonData)
       }
     })

@@ -10,6 +10,7 @@ const treeItems = ref<TreeItem[]>([])
 const tabsTreeData = ref<{ name: string, treeData: TreeItem[] }[]>([])
 
 const hotContext = ref<ViteHotContext | null>(null)
+const initLoading = ref(true)
 
 onMounted(async () => {
   const hot = await createHotContext('/___', `${location.pathname.split('/__i18n__dev')[0] || ''}/`.replace(/\/\//g, '/'))
@@ -38,6 +39,7 @@ onMounted(async () => {
 
         tabsTreeData.value = treeDataResult
         treeItems.value = treeDataResult[0].treeData
+        initLoading.value = false
       } catch (error) { }
     })
   }
@@ -84,6 +86,8 @@ const handleAddNewKey = (fullKey: string, localeValues: Record<string, string>) 
 
 <template>
   <div class="p-8 flex flex-col gap-4">
+    <ScreenLoading size="2x" :loading="initLoading" />
+
     <Tabs v-model="activePrimaryTab" :items="primaryTabs" />
 
     <TreeJSON :tree-data="treeItems" @keyEnter="handleKeyEnter" @valueEnter="handleValueEnter"

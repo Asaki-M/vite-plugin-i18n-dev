@@ -13,7 +13,11 @@ export interface VitepluginI18nDevOptions {
     locales: {
       [key: string]: string
     }
-  }[]
+  }[],
+  /**
+   * 是否开启扁平化 i18n key
+   */
+  flatKey?: boolean
 }
 
 function VitepluginI18nDev(options: VitepluginI18nDevOptions): Plugin {
@@ -32,7 +36,7 @@ function VitepluginI18nDev(options: VitepluginI18nDevOptions): Plugin {
         dev: true,
       }))
 
-      const context = new VitepluginI18nDevContext(server, options.dirs)
+      const context = new VitepluginI18nDevContext(server, options.dirs, options.flatKey)
       server.ws.on('connection', () => {
         context.initI18nData(config.root)
       })
