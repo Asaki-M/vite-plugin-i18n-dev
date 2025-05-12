@@ -54,9 +54,11 @@ Start your project and open `http://localhost:3000/__i18n__dev/`, now you can mo
 
 ### TODO:
 feat: 
- - Add Virtual List to resolve large data
+ - Add Virtual List to resolve large data (maybe use table component)
  - Add translate api to synchronous input locale value(maybe support youdao and google)
  
  perf:
  - Sort tree data by child
  - Fixed add new key action position
+ - Menu tab add search
+ - Add new key cannot use dialog
