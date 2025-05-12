@@ -12,6 +12,7 @@ declare module 'vue' {
     Divider: typeof import('./src/components/Divider/index.vue')['default']
     Input: typeof import('./src/components/Input/index.vue')['default']
     ScreenLoading: typeof import('./src/components/ScreenLoading/index.vue')['default']
+    Table: typeof import('./src/components/Table/index.vue')['default']
     Tabs: typeof import('./src/components/Tabs/index.vue')['default']
     Textarea: typeof import('./src/components/Textarea/index.vue')['default']
     Tooltip: typeof import('./src/components/Tooltip/index.vue')['default']
