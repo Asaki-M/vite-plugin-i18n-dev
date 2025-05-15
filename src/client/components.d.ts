@@ -16,6 +16,5 @@ declare module 'vue' {
     Tabs: typeof import('./src/components/Tabs/index.vue')['default']
     Textarea: typeof import('./src/components/Textarea/index.vue')['default']
     Tooltip: typeof import('./src/components/Tooltip/index.vue')['default']
-    TreeJSON: typeof import('./src/components/TreeJSON/index.vue')['default']
   }
 }
