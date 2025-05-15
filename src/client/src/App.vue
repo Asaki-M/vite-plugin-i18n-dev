@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TreeItem } from './components/TreeJSON/index.d'
+import type { TreeItem } from './data.d'
 import { formatI18nData, formatJsonToTreeItems, VITE_PLUGIN_I18N_DEV_KEY_PREFIX } from './utils'
 import { createHotContext, ViteHotContext } from 'vite-hot-client'
 
@@ -90,7 +90,7 @@ const handleAddNewKey = (fullKey: string, localeValues: Record<string, string>) 
 
     <Tabs v-model="activePrimaryTab" :items="primaryTabs" />
 
-    <TreeJSON :tree-data="treeItems" @keyEnter="handleKeyEnter" @valueEnter="handleValueEnter"
+    <Table :tree-data="treeItems" @keyEnter="handleKeyEnter" @valueEnter="handleValueEnter"
       @delete="handleDeleteTreeItem" @addNewKey="handleAddNewKey" />
   </div>
 </template>

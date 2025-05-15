@@ -1,5 +1,4 @@
-import type { TreeItem } from "./components/TreeJSON";
-
+import type { TreeItem } from './data.d'
 export const VITE_PLUGIN_I18N_DEV_KEY_PREFIX = 'vite-plugin-i18n-dev'
 
 type LanguageData = {
@@ -80,7 +79,7 @@ export const formatJsonToTreeItems = (json: Record<string, any>, parentKey: stri
           title: key,
           key: key,
           fullKey: fullKey,
-          value: value,
+          ...value,
           children: undefined
         };
       }
@@ -88,7 +87,6 @@ export const formatJsonToTreeItems = (json: Record<string, any>, parentKey: stri
         title: key,
         key: key,
         fullKey: fullKey,
-        value: '',
         children: formatJsonToTreeItems(value, fullKey)
       };
     }

@@ -12,7 +12,6 @@
     "test": "test"
   },
   "button": {
-    "submit": "Submit",
     "cancel": "Cancel",
     "delete": "Delete",
     "update": "Update",

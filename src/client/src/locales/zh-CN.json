@@ -12,7 +12,6 @@
     "test": "测试"
   },
   "button": {
-    "submit": "提交",
     "cancel": "取消",
     "delete": "删除",
     "update": "更新",
