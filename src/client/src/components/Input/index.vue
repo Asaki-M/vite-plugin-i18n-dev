@@ -9,7 +9,7 @@ interface Props {
   clearable?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   modelValue: '',
   placeholder: '',
   disabled: false,
@@ -20,56 +20,18 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string | number]
-  'change': [value: string | number]
-  'focus': [event: FocusEvent]
-  'blur': [event: FocusEvent]
-  'enter': [value: string | number]
+  (e: 'pressEnter'): void
 }>()
 
-const isEditing = ref(false);
-const originalValue = ref(props.modelValue);
+const model = defineModel({ type: String })
 
-const handleInput = (e: Event) => {
-  const value = (e.target as HTMLInputElement).value
-  isEditing.value = true;
-  emit('update:modelValue', value)
-  emit('change', value)
+const handlePressEnter = () => {
+  emit('pressEnter')
 }
-
-const handleFocus = (e: FocusEvent) => {
-  emit('focus', e)
-}
-
-const handleBlur = (e: FocusEvent) => {
-  emit('blur', e)
-  emit('update:modelValue', originalValue.value);
-  isEditing.value = false;
-}
-
-const handleEnter = (e: KeyboardEvent) => {
-  if (e.key === 'Enter') {
-    emit('enter', props.modelValue);
-    originalValue.value = props.modelValue;
-    isEditing.value = false;
-  } else if (e.key === 'Escape') {
-    isEditing.value = false;
-    emit('update:modelValue', originalValue.value);
-  }
-}
-
-const toggleEdit = () => {
-  isEditing.value = !isEditing.value;
-  originalValue.value = props.modelValue;
-}
-
 </script>
 
 <template>
-  <div @dblclick="toggleEdit" class="w-full">
-    <input v-if="isEditing || modelValue === '' || modelValue === undefined || modelValue === null" class="bg-slate-100 rounded-md p-2 focus:border-0 outline-0 w-full" :value="modelValue"
-      :type="type" :placeholder="placeholder" :disabled="disabled" :maxlength="maxlength" :readonly="readonly" autofocus
-      @input="handleInput" @focus="handleFocus" @blur="handleBlur" @keydown="handleEnter" />
-    <div class="w-full" v-else>{{ modelValue }}</div>
-  </div>
+  <input class="bg-slate-300 rounded-md p-2 focus:border-0 outline-0 w-full" v-model="model" :type="type"
+    :placeholder="placeholder" :disabled="disabled" :maxlength="maxlength" :readonly="readonly" autofocus
+    @keydown.enter="handlePressEnter" />
 </template>

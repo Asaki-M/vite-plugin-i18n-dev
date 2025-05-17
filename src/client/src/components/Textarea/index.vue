@@ -9,7 +9,7 @@ interface Props {
   cols?: number
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   modelValue: '',
   placeholder: '',
   disabled: false,
@@ -20,64 +20,18 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string]
-  'change': [value: string]
-  'focus': [event: FocusEvent]
-  'blur': [event: FocusEvent]
-  'enter': [value: string]
+  (e: 'pressEnter'): void
 }>()
 
-const isEditing = ref(false);
-const textareaValue = ref(props.modelValue);
+const model = defineModel({ type: String })
 
-watch(() => props.modelValue, (newVal) => {
-  textareaValue.value = newVal;
-});
-
-const handleInput = (e: Event) => {
-  const value = (e.target as HTMLTextAreaElement).value;
-  textareaValue.value = value;
-  isEditing.value = true;
-  emit('update:modelValue', value);
-  emit('change', value);
-}
-
-const handleFocus = (e: FocusEvent) => {
-  emit('focus', e)
-}
-
-const handleBlur = (e: FocusEvent) => {
-  emit('blur', e)
-  emit('update:modelValue', textareaValue.value);
-  isEditing.value = false;
-}
-
-const handleEnter = (e: KeyboardEvent) => {
-  const target = e.target as HTMLTextAreaElement;
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    emit('enter', target.value);
-    textareaValue.value = target.value;
-    isEditing.value = false;
-  } else if (e.key === 'Escape') {
-    isEditing.value = false;
-    textareaValue.value = props.modelValue;
-    emit('update:modelValue', props.modelValue);
-  }
-}
-
-const toggleEdit = () => {
-  isEditing.value = !isEditing.value;
-  textareaValue.value = props.modelValue;
+const handlePressEnter = () => {
+  emit('pressEnter')
 }
 </script>
 
 <template>
-  <div @dblclick="toggleEdit" class="w-full">
-    <textarea v-if="isEditing || textareaValue === '' || textareaValue === undefined || textareaValue === null"
-      class="bg-slate-100 rounded-md p-2 focus:border-0 outline-0 w-full" :value="textareaValue"
-      :placeholder="placeholder" :disabled="disabled" :maxlength="maxlength" :readonly="readonly" :rows="rows"
-      :cols="cols" autofocus @input="handleInput" @focus="handleFocus" @blur="handleBlur" @keydown="handleEnter" />
-    <span v-else>{{ textareaValue }}</span>
-  </div>
+  <textarea class="bg-slate-300 rounded-md p-2 focus:border-0 outline-0 w-full" v-model="model"
+    :placeholder="placeholder" :disabled="disabled" :maxlength="maxlength" :readonly="readonly" :rows="rows"
+    :cols="cols" autofocus @keydown.enter="handlePressEnter" />
 </template>

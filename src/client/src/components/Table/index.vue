@@ -1,6 +1,6 @@
 <template>
   <s-table class="w-full h-full" bordered :data-source="dataSource" :columns="columns" :pagination="false"
-    :scroll="{ y: 650 }">
+    expandRowByClick :scroll="{ y: 650 }" :sticky="{ offsetHeader: 64 }">
     <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'action'">
         <div class="flex flex-1 gap-4 items-center text-sky-700" v-if="!record.children">
@@ -14,12 +14,44 @@
           </Tooltip>
         </div>
       </template>
+      <template v-if="column.dataIndex === 'key'">
+        <div v-if="localeKeyEditCellData[KEY_CELL_PREFIX + record.fullKey]" class="flex items-center gap-2">
+          <Input v-model="record.key" class="flex-1" @pressEnter="() => handleLocaleKeyEditCellSave(record)" />
+          <img class="w-5 h-5 shrink-0" src="@/assets/icons/check.svg"
+            @click="() => handleLocaleKeyEditCellSave(record)">
+        </div>
+        <div v-else class="flex items-center gap-2">
+          <span class="flex-1" :class="{ 'font-bold text-base': record.children }">{{ record.key }}</span>
+          <img v-if="!record.children" class="w-5 h-5 shrink-0" src="@/assets/icons/edit.svg"
+            @click="() => handleLocaleKeyEditCellEdit(record.fullKey)">
+        </div>
+      </template>
+
+
+      <template v-if="!(['key', 'action'].includes(column.dataIndex))">
+        <div v-if="localeKeyEditCellData[column.dataIndex + '_' + record.fullKey]" class="flex items-center gap-2">
+          <Textarea v-model="record[column.dataIndex]" class="flex-1"
+            @pressEnter="() => handleLocaleValueEditCellSave(record, column.dataIndex)" />
+          <img class="w-5 h-5 shrink-0" src="@/assets/icons/check.svg"
+            @click="() => handleLocaleValueEditCellSave(record, column.dataIndex)">
+        </div>
+        <div v-else class="flex items-center gap-2">
+          <span class="flex-1">{{ record[column.dataIndex] }}</span>
+          <img v-if="!record.children" class="w-5 h-5 shrink-0" src="@/assets/icons/edit.svg"
+            @click="() => handleLocaleValueEditCellEdit(record.fullKey, column.dataIndex)">
+        </div>
+      </template>
     </template>
   </s-table>
 </template>
 <script setup lang="ts">
+import type { TreeItem } from '../../data.d'
+import type { ColumnType } from '@surely-vue/table/dist/src/components/interface';
+
+const KEY_CELL_PREFIX = 'KEY_CELL_'
+
 const props = defineProps<{
-  treeData: any[];
+  treeData: TreeItem[];
 }>();
 
 const emit = defineEmits<{
@@ -30,16 +62,15 @@ const emit = defineEmits<{
 }>()
 
 const columns = computed(() => {
-  const result = [
+  const result: ColumnType[] = [
     {
       title: 'Action',
       dataIndex: 'action',
-      width: '15%',
+      width: 150,
     },
     {
       title: 'Locales Key',
       dataIndex: 'key',
-      editable: true,
     },
   ]
 
@@ -80,17 +111,37 @@ const columns = computed(() => {
     result.push({
       title: locale,
       dataIndex: locale,
-      editable: true,
+      autoHeight: true
     });
   }
   return result;
 })
 
-const dataSource = ref<any[]>(props.treeData);
+const dataSource = ref<TreeItem[]>(props.treeData);
 
 watch(() => props.treeData, (newVal) => {
   dataSource.value = newVal;
 })
+
+const localeKeyEditCellData: Record<string, boolean> = reactive({})
+
+const handleLocaleKeyEditCellEdit = (fullKey: string) => {
+  localeKeyEditCellData[KEY_CELL_PREFIX + fullKey] = true
+}
+
+const handleLocaleKeyEditCellSave = (record: TreeItem) => {
+  delete localeKeyEditCellData[KEY_CELL_PREFIX + record.fullKey]
+  emit('keyEnter', record.fullKey, record.key)
+}
+
+const handleLocaleValueEditCellEdit = (fullKey: string, locale: string) => {
+  localeKeyEditCellData[locale + '_' + fullKey] = true
+}
+
+const handleLocaleValueEditCellSave = (record: TreeItem, locale: string) => {
+  delete localeKeyEditCellData[locale + '_' + record.fullKey]
+  emit('valueEnter', record.fullKey, locale, record[locale])
+}
 
 const handleDeleteTreeItem = (fullKey: string) => {
   emit('delete', fullKey)
