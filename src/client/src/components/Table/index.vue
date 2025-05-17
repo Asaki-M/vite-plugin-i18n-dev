@@ -1,6 +1,6 @@
 <template>
   <s-table class="w-full h-full" bordered :data-source="dataSource" :columns="columns" :pagination="false"
-    :scroll="{ y: 500 }" :value-change="handleValueChange">
+    :scroll="{ y: 650 }">
     <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'action'">
         <div class="flex flex-1 gap-4 items-center text-sky-700" v-if="!record.children">
@@ -18,9 +18,6 @@
   </s-table>
 </template>
 <script setup lang="ts">
-import { ValueParserParams } from '@surely-vue/table/dist/src/components/interface';
-
-
 const props = defineProps<{
   treeData: any[];
 }>();
@@ -95,10 +92,6 @@ watch(() => props.treeData, (newVal) => {
   dataSource.value = newVal;
 })
 
-watch(dataSource, (newVal) => {
-  console.log(newVal, 'newVal');
-})
-
 const handleDeleteTreeItem = (fullKey: string) => {
   emit('delete', fullKey)
 }
@@ -106,8 +99,8 @@ const handleDeleteTreeItem = (fullKey: string) => {
 const handleCopyFullKey = (fullKey: string) => {
   navigator.clipboard.writeText(fullKey)
 }
-
-const handleValueChange = (e: InputEvent, params: ValueParserParams) => {
-  console.log(e, params, 'e, params');
-}
 </script>
+
+<style lang="less">
+@import url('./reset.less');
+</style>
