@@ -9,6 +9,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AddNewKeyDialog: typeof import('./src/components/AddNewKeyDialog/index.vue')['default']
+    Button: typeof import('./src/components/Button/index.vue')['default']
     Divider: typeof import('./src/components/Divider/index.vue')['default']
     Input: typeof import('./src/components/Input/index.vue')['default']
     ScreenLoading: typeof import('./src/components/ScreenLoading/index.vue')['default']
