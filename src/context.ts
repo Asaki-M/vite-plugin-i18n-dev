@@ -20,6 +20,8 @@ export class VitepluginI18nDevContext {
   private root: string = '';
   public tabs: Tab[] = [];
   private flatKey: VitepluginI18nDevOptions['flatKey'] = false;
+  private cacheJsonData = new Map<string, Record<string, string>>();
+
   constructor(server: ViteDevServer, dirs: VitepluginI18nDevOptions['dirs'], flatKey: VitepluginI18nDevOptions['flatKey']) {
     if (VitepluginI18nDevContext.instance) {
       return VitepluginI18nDevContext.instance;
@@ -63,9 +65,14 @@ export class VitepluginI18nDevContext {
   private async getI18nData(path: string) {
     let result: any = {}
     try {
-      if (path.endsWith('.json')) {
-        const content = await fs.readFile(path, 'utf-8')
-        result = JSON.parse(content)
+      if (this.cacheJsonData.has(path)) {
+        result = this.cacheJsonData.get(path)
+      } else {
+        if (path.endsWith('.json')) {
+          const content = await fs.readFile(path, 'utf-8')
+          result = JSON.parse(content)
+          this.cacheJsonData.set(path, result)
+        }
       }
     } catch (error) {
       console.log('Can not read file, please check the path')
@@ -77,6 +84,7 @@ export class VitepluginI18nDevContext {
   private async writeI18nData(path: string, data: any) {
     try {
       await fs.writeFile(path, JSON.stringify(data, null, 2))
+      this.cacheJsonData.set(path, data)
     } catch (error) {
       console.log('Can not write file, please check the path')
     }

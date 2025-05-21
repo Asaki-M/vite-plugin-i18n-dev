@@ -1,7 +1,6 @@
 {
   "greeting": "111123",
   "farewell": "Goodbye",
-  "welcome": "Welcome",
   "error": {
     "not_found": "Not Found",
     "server_error": "Server Error",
@@ -43,9 +42,11 @@
     "logout": "Logout"
   },
   "footer": {
+    "111": "111",
     "terms": "Terms of Service",
     "privacy": "Privacy Policy",
     "help": "Help Center"
   },
-  "test": "test"
+  "welcome1asdasd": "Welcome11",
+  "test1111": "test111123123123"
 }

@@ -16,6 +16,8 @@ const emit = defineEmits<{
   (e: 'addNewKey', fullKey: string, localeValues: Record<string, string>): void
 }>()
 
+const filterKeys = ['title', 'key', 'fullKey', 'localeKey', 'children']
+
 const columns = computed(() => {
   const result: ColumnType[] = [
     {
@@ -25,7 +27,7 @@ const columns = computed(() => {
     },
     {
       title: 'Locales Key',
-      dataIndex: 'key',
+      dataIndex: 'localeKey',
     },
   ]
 
@@ -34,7 +36,7 @@ const columns = computed(() => {
     for (const item of props.treeData) {
       // Check direct properties that are not standard TreeItem fields
       const locales = Object.keys(item).filter(key =>
-        !['title', 'key', 'fullKey', 'children'].includes(key) &&
+        !filterKeys.includes(key) &&
         typeof item[key] === 'string'
       );
 
@@ -46,7 +48,7 @@ const columns = computed(() => {
       if (item.children) {
         for (const child of item.children) {
           const childLocales = Object.keys(child).filter(key =>
-            !['title', 'key', 'fullKey', 'children'].includes(key) &&
+            !filterKeys.includes(key) &&
             typeof child[key] === 'string'
           );
 
@@ -78,7 +80,7 @@ const locales = computed(() => {
     return []
   }
   const locales = Object.keys(treeItem).filter(key =>
-    !['title', 'key', 'fullKey', 'children'].includes(key) &&
+    !filterKeys.includes(key) &&
     typeof treeItem[key] === 'string'
   );
   return locales
@@ -87,24 +89,19 @@ const locales = computed(() => {
 
 const addNewKeyModalRef = ref<InstanceType<typeof AddNewKeyDialog> | null>(null)
 const dataSource = ref<TreeItem[]>(props.treeData);
-const buttons = ref<Record<string, string>[]>([])
+const buttons = ref(new Map())
 
 watch(() => props.treeData, (newVal) => {
-  dataSource.value = newVal;
+  dataSource.value = newVal.sort((a, b) => a.children ? 1 : b.children ? -1 : 0);
 
   let isAdded = false
+  buttons.value.clear()
   for (let item of dataSource.value) {
     if (item.children) {
-      buttons.value.push({
-        fullKey: item.fullKey,
-        key: item.key
-      })
+      buttons.value.set(item.fullKey, item.key)
     }
     if (!isAdded && !item.children) {
-      buttons.value.push({
-        fullKey: 'Root',
-        key: 'root'
-      })
+      buttons.value.set('Root', 'root')
       isAdded = true
     }
   }
@@ -118,7 +115,7 @@ const handleLocaleKeyEditCellEdit = (fullKey: string) => {
 
 const handleLocaleKeyEditCellSave = (record: TreeItem) => {
   delete localeKeyEditCellData[KEY_CELL_PREFIX + record.fullKey]
-  emit('keyEnter', record.fullKey, record.key)
+  emit('keyEnter', record.fullKey, record.localeKey as string)
 }
 
 const handleLocaleValueEditCellEdit = (fullKey: string, locale: string) => {
@@ -127,7 +124,7 @@ const handleLocaleValueEditCellEdit = (fullKey: string, locale: string) => {
 
 const handleLocaleValueEditCellSave = (record: TreeItem, locale: string) => {
   delete localeKeyEditCellData[locale + '_' + record.fullKey]
-  emit('valueEnter', record.fullKey, locale, record[locale])
+  emit('valueEnter', record.fullKey, locale, record[locale] as string)
 }
 
 const handleDeleteTreeItem = (fullKey: string) => {
@@ -155,9 +152,9 @@ const handleAddNewKey = (fullKey: string, localeValues: Record<string, string>) 
   <AddNewKeyDialog ref="addNewKeyModalRef" :locales="locales" @create="handleAddNewKey" />
 
   <div class="flex items-center gap-4 flex-wrap">
-    <Button v-for="button in buttons" variant="primary" :key="button.fullKey"
-      @click="() => handleButtonClick(button.fullKey)">
-      Add for {{ button.key }}
+    <Button v-for="button in Array.from(buttons.entries())" variant="primary" :key="button[0]"
+      @click="() => handleButtonClick(button[0])">
+      Add for {{ button[1] }}
     </Button>
   </div>
 
@@ -176,21 +173,22 @@ const handleAddNewKey = (fullKey: string, localeValues: Record<string, string>) 
           </Tooltip>
         </div>
       </template>
-      <template v-if="column.dataIndex === 'key'">
+      <!-- 多语言对应的key -->
+      <template v-if="column.dataIndex === 'localeKey'">
         <div v-if="localeKeyEditCellData[KEY_CELL_PREFIX + record.fullKey]" class="flex items-center gap-2">
-          <Input v-model="record.key" class="flex-1" @pressEnter="() => handleLocaleKeyEditCellSave(record)" />
+          <Input v-model="record.localeKey" class="flex-1" @pressEnter="() => handleLocaleKeyEditCellSave(record)" />
           <img class="w-5 h-5 shrink-0" src="@/assets/icons/check.svg"
             @click="() => handleLocaleKeyEditCellSave(record)">
         </div>
         <div v-else class="flex items-center gap-2">
-          <span class="flex-1" :class="{ 'font-bold text-base': record.children }">{{ record.key }}</span>
+          <span class="flex-1" :class="{ 'font-bold text-base': record.children }">{{ record.localeKey }}</span>
           <img v-if="!record.children" class="w-5 h-5 shrink-0" src="@/assets/icons/edit.svg"
             @click="() => handleLocaleKeyEditCellEdit(record.fullKey)">
         </div>
       </template>
 
-
-      <template v-if="!(['key', 'action'].includes(column.dataIndex))">
+      <!-- 多语言对应的值 -->
+      <template v-if="!(['localeKey', 'action'].includes(column.dataIndex))">
         <div v-if="localeKeyEditCellData[column.dataIndex + '_' + record.fullKey]" class="flex items-center gap-2">
           <Textarea v-model="record[column.dataIndex]" class="flex-1"
             @pressEnter="() => handleLocaleValueEditCellSave(record, column.dataIndex)" />

@@ -59,7 +59,11 @@ export default defineConfig({
     outDir: resolve(__dirname, '../../dist/client'),
     rollupOptions: {
       output: {
-        manualChunks: undefined
+        manualChunks: {
+          vender_vue: ['vue'],
+          vender_surely_table: ['@surely-vue/table'],
+          vender_radix_vue: ['radix-vue'],
+        }
       }
     }
   },

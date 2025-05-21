@@ -77,24 +77,27 @@ export const formatJsonToTreeItems = (json: Record<string, any>, parentKey: stri
       if (isLanguageValueObject) {
         return {
           title: key,
-          key: key,
+          key: fullKey,
           fullKey: fullKey,
+          localeKey: key,
           ...value,
           children: undefined
         };
       }
       return {
         title: key,
-        key: key,
+        key: fullKey,
         fullKey: fullKey,
+        localeKey: key,
         children: formatJsonToTreeItems(value, fullKey)
       };
     }
 
     return {
       title: key,
-      key: key,
+      key: fullKey,
       fullKey: fullKey,
+      localeKey: key,
       value: String(value),
       children: undefined
     };
