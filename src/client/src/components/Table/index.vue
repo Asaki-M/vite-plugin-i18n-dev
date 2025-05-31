@@ -173,9 +173,9 @@ const handleSearchClear = () => {
     <SearchDropdown :origin-data="dataSource" @select="handleSearchSelect" @clear="handleSearchClear" />
   </div>
 
-  <s-table class="w-full h-full" ref="tableRef" bordered :data-source="dataSource" :columns="columns"
+  <s-table v-if="dataSource.length > 0" class="w-full h-full" ref="tableRef" bordered :data-source="dataSource" :columns="columns"
     :pagination="false" expandRowByClick :scroll="{ y: 600 }" :sticky="{ offsetHeader: 64 }"
-    :defaultExpandedRowKeys="['common']"
+    :defaultExpandAllRows="true"
     :rowClassName="(record: TreeItem) => record.fullKey === highlightRowKey ? '!bg-sky-100' : ''">
     <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'action'">
