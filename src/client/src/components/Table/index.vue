@@ -90,6 +90,7 @@ const locales = computed(() => {
 const addNewKeyModalRef = ref<InstanceType<typeof AddNewKeyDialog> | null>(null)
 const dataSource = ref<TreeItem[]>(props.treeData);
 const buttons = ref(new Map())
+const tableRef = ref()
 
 watch(() => props.treeData, (newVal) => {
   dataSource.value = newVal.sort((a, b) => a.children ? 1 : b.children ? -1 : 0);
@@ -146,6 +147,16 @@ const handleButtonClick = (fullKey: string) => {
 const handleAddNewKey = (fullKey: string, localeValues: Record<string, string>) => {
   emit('addNewKey', fullKey, localeValues)
 }
+
+const highlightRowKey = ref('')
+const handleSearchSelect = (key: string) => {
+  tableRef.value.scrollTo({ rowKey: key }, 'smooth');
+  highlightRowKey.value = key
+}
+
+const handleSearchClear = () => {
+  highlightRowKey.value = ''
+}
 </script>
 
 <template>
@@ -158,8 +169,14 @@ const handleAddNewKey = (fullKey: string, localeValues: Record<string, string>) 
     </Button>
   </div>
 
-  <s-table class="w-full h-full" bordered :data-source="dataSource" :columns="columns" :pagination="false"
-    expandRowByClick :scroll="{ y: 650 }" :sticky="{ offsetHeader: 64 }" :defaultExpandAllRows="true">
+  <div class="flex w-1/3">
+    <SearchDropdown :origin-data="dataSource" @select="handleSearchSelect" @clear="handleSearchClear" />
+  </div>
+
+  <s-table class="w-full h-full" ref="tableRef" bordered :data-source="dataSource" :columns="columns"
+    :pagination="false" expandRowByClick :scroll="{ y: 600 }" :sticky="{ offsetHeader: 64 }"
+    :defaultExpandedRowKeys="['common']"
+    :rowClassName="(record: TreeItem) => record.fullKey === highlightRowKey ? '!bg-sky-100' : ''">
     <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'action'">
         <div class="flex flex-1 gap-4 items-center text-sky-700" v-if="!record.children">
