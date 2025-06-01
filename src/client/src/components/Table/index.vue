@@ -75,10 +75,16 @@ const columns = computed(() => {
 })
 
 const locales = computed(() => {
-  const treeItem = props.treeData?.[0]
+  let treeItem = props.treeData?.[0]
+
+  if (treeItem?.children) {
+    treeItem = treeItem.children[0]
+  }
+
   if (!treeItem) {
     return []
   }
+
   const locales = Object.keys(treeItem).filter(key =>
     !filterKeys.includes(key) &&
     typeof treeItem[key] === 'string'

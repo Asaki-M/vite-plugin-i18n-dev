@@ -3,6 +3,7 @@ import path from 'path'
 import fs from 'fs/promises'
 import { VitepluginI18nDevOptions } from "./index";
 import { changeByPath, deleteByPath } from "./utils";
+import { Translate } from "./translate";
 
 export type Tab = {
   name: string;
@@ -21,6 +22,7 @@ export class VitepluginI18nDevContext {
   public tabs: Tab[] = [];
   private flatKey: VitepluginI18nDevOptions['flatKey'] = false;
   private cacheJsonData = new Map<string, Record<string, string>>();
+  private translateInstance: Translate | null = null
 
   constructor(server: ViteDevServer, dirs: VitepluginI18nDevOptions['dirs'], flatKey: VitepluginI18nDevOptions['flatKey']) {
     if (VitepluginI18nDevContext.instance) {
@@ -31,6 +33,8 @@ export class VitepluginI18nDevContext {
     this.dirs = dirs;
     this.flatKey = flatKey;
     VitepluginI18nDevContext.instance = this;
+
+    this.translateInstance = Translate.getInstance()
 
     this.watchChangeI18nDataForKey()
     this.watchChangeI18nDataForValue()
@@ -94,6 +98,14 @@ export class VitepluginI18nDevContext {
     this.server.ws.send(`${VITE_PLUGIN_I18N_DEV_KEY_PREFIX}:${key}`, JSON.stringify(data))
   }
 
+  private async translateToOtherLocales(text: string, to: string) {
+    if (this.translateInstance) {
+      const res = await this.translateInstance.translate(text, to)
+      return res
+    }
+    return false
+  }
+
   private watchChangeI18nDataForKey() {
     this.server.ws.on(`${VITE_PLUGIN_I18N_DEV_KEY_PREFIX}:changeI18nDataForKey`, async (data: unknown) => {
       const { fullKey, value, activePrimaryTab } = data as { fullKey: string, value: string, activePrimaryTab: string }
@@ -116,7 +128,7 @@ export class VitepluginI18nDevContext {
             newFullKey.push(value);
             changeByPath(jsonData, newFullKey.join("."), deleteValue);
           }
-          
+
           await this.writeI18nData(localPath, jsonData)
         }
       }
@@ -128,9 +140,12 @@ export class VitepluginI18nDevContext {
       const { fullKey, value, locale, activePrimaryTab } = data as { fullKey: string, value: string, locale: string, activePrimaryTab: string }
       const localPathItem = this.dirs.find(dir => dir.name === activePrimaryTab)
       if (localPathItem) {
-        // TODO: need to translate all locales to sync
         const localPath = path.join(this.root, localPathItem.locales[locale])
+        const otherLocales = Object.keys(localPathItem.locales).filter(key => key !== locale)
 
+        const canTranslate = !!this.translateInstance
+
+        // 修改当前语言的值
         const jsonData = await this.getI18nData(localPath)
         if (this.flatKey) {
           jsonData[fullKey] = value
@@ -138,6 +153,26 @@ export class VitepluginI18nDevContext {
           changeByPath(jsonData, fullKey, value)
         }
         await this.writeI18nData(localPath, jsonData)
+
+        if (!canTranslate) {
+          return
+        }
+
+        // 同步翻译其他语言并写入
+        for (const otherLocale of otherLocales) {
+          const otherPath = path.join(this.root, localPathItem.locales[otherLocale])
+          const otherJsonData = await this.getI18nData(otherPath)
+          const translateValue = await this.translateToOtherLocales(value, otherLocale)
+          if (translateValue) {
+            if (this.flatKey) {
+              otherJsonData[fullKey] = translateValue
+            } else {
+              changeByPath(otherJsonData, fullKey, translateValue)
+            }
+            await this.writeI18nData(otherPath, otherJsonData)
+          }
+        }
+        this.initI18nData(this.root)
       }
     })
   }
@@ -155,6 +190,7 @@ export class VitepluginI18nDevContext {
           deleteByPath(jsonData, fullKey);
           await this.writeI18nData(localPath, jsonData)
         }
+        this.initI18nData(this.root)
       }
     })
   }
@@ -163,16 +199,36 @@ export class VitepluginI18nDevContext {
     this.server.ws.on(`${VITE_PLUGIN_I18N_DEV_KEY_PREFIX}:addNewKey`, async (data: unknown) => {
       const { localeValues, fullKey, activePrimaryTab } = data as { localeValues: Record<string, string>, fullKey: string, activePrimaryTab: string }
 
+      const newLocalesValues: Record<string, string> = Object.assign({}, localeValues)
+      // 翻译配置后，添加新 key 时，自动翻译补全空 value
+      if (this.translateInstance) {
+        // 获取某个语言输入的值
+        const [originInputKey, originInputValue] = Object.entries(localeValues).find(([key, value]) => !!value) ?? []
+        if(originInputValue) {
+          for(let key of Object.keys(localeValues)) {
+            if(key === originInputKey) {
+              newLocalesValues[key] = originInputValue
+              continue
+            }
+            const translateValue = await this.translateToOtherLocales(originInputValue, key)
+            if(translateValue) {
+              newLocalesValues[key] = translateValue
+            }
+          }
+        }
+      }
+
       const localPathItem = this.dirs.find(dir => dir.name === activePrimaryTab)
       if (localPathItem) {
         const localesKeys = Object.keys(localPathItem.locales)
         for (const locale of localesKeys) {
           const localPath = path.join(this.root, localPathItem.locales[locale])
           const jsonData = await this.getI18nData(localPath)
-          const value = localeValues[locale]
+          const value = newLocalesValues[locale]
           changeByPath(jsonData, fullKey, value)
           await this.writeI18nData(localPath, jsonData)
         }
+        this.initI18nData(this.root)
       }
     })
   }
