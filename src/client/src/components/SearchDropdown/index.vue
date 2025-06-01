@@ -51,7 +51,7 @@ const handleClear = () => {
 <template>
   <ComboboxRoot v-model="v" class="relative">
     <ComboboxAnchor
-      class="min-w-[160px] inline-flex items-center justify-between rounded-md px-3 py-2 text-sm leading-none h-[35px] gap-2 bg-white text-gray-900 border border-gray-200 shadow-sm hover:bg-gray-50 focus:shadow-[0_0_0_2px] focus:shadow-sky-600/20 focus:border-sky-600 outline-none transition-colors">
+      class="min-w-[300px] inline-flex items-center justify-between rounded-md px-3 py-2 text-sm leading-none h-[35px] gap-2 bg-white text-gray-900 border border-gray-200 shadow-sm hover:bg-gray-50 focus:shadow-[0_0_0_2px] focus:shadow-sky-600/20 focus:border-sky-600 outline-none transition-colors">
       <ComboboxInput
         class="!bg-transparent outline-none text-gray-900 h-full flex-1 selection:bg-sky-600/20 placeholder:text-gray-500"
         placeholder="Search Row..." />
