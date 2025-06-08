@@ -32,14 +32,14 @@ export default defineConfig({
             'jp-JP': 'src/locales/jp-JP.json',
             'pt-PT': 'src/locales/pt-PT.json',
           },
+          // If your locale json key is like {"common.test": "test"}, you should set flatKey is true
+          flatKey: true,
         },
         {
           name: 'menus',
           // ...
         },
       ],
-      // If your locale json key is like {"common.test": "test"}, you should set flatKey is true
-      flatKey: true,
       // If you set this config, the plugin will auto translate sync your change and create
       translate: {
         type: 'baidu',
@@ -54,7 +54,7 @@ export default defineConfig({
 |  Props   | Required | Description  |
 |  ----  | ----  | ----  |
 | dirs  | true | locales file path, support multipule locales file, need to set a Array |
-| flatKey  | false | call the plugin locale file use flat key. If your locale file use "global.key: value", you need to set true. |
+| flatKey  | false | call the plugin locale file use flat key. If your locale file use "global.key: value", you need to set true. Move in `dirs` props |
 |  translate  | false  | translate api config. It contain the translate type, appId and secretKey. Now this plugin support YouDao and Baidu traslation.  |
 ---
 

@@ -19,19 +19,17 @@ export class VitepluginI18nDevContext {
   private server!: ViteDevServer;
   private dirs: VitepluginI18nDevOptions['dirs'] = [];
   private root: string = '';
-  public tabs: Tab[] = [];
-  private flatKey: VitepluginI18nDevOptions['flatKey'] = false;
   private cacheJsonData = new Map<string, Record<string, string>>();
   private translateInstance: Translate | null = null
+  public tabs: Tab[] = [];
 
-  constructor(server: ViteDevServer, dirs: VitepluginI18nDevOptions['dirs'], flatKey: VitepluginI18nDevOptions['flatKey']) {
+  constructor(server: ViteDevServer, dirs: VitepluginI18nDevOptions['dirs']) {
     if (VitepluginI18nDevContext.instance) {
       return VitepluginI18nDevContext.instance;
     }
 
     this.server = server;
     this.dirs = dirs;
-    this.flatKey = flatKey;
     VitepluginI18nDevContext.instance = this;
 
     this.translateInstance = Translate.getInstance()
@@ -117,7 +115,7 @@ export class VitepluginI18nDevContext {
           const localPath = path.join(this.root, localPathItem.locales[locale])
           const jsonData = await this.getI18nData(localPath)
 
-          if (this.flatKey) {
+          if (localPathItem.flatKey) {
             const oldValue = jsonData[fullKey]
             delete jsonData[fullKey]
             jsonData[value] = oldValue
@@ -147,7 +145,7 @@ export class VitepluginI18nDevContext {
 
         // 修改当前语言的值
         const jsonData = await this.getI18nData(localPath)
-        if (this.flatKey) {
+        if (localPathItem.flatKey) {
           jsonData[fullKey] = value
         } else {
           changeByPath(jsonData, fullKey, value)
@@ -164,7 +162,7 @@ export class VitepluginI18nDevContext {
           const otherJsonData = await this.getI18nData(otherPath)
           const translateValue = await this.translateToOtherLocales(value, otherLocale)
           if (translateValue) {
-            if (this.flatKey) {
+            if (localPathItem.flatKey) {
               otherJsonData[fullKey] = translateValue
             } else {
               changeByPath(otherJsonData, fullKey, translateValue)
