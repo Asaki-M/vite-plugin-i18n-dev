@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-i18n-dev",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Vite plugin for i18n development, help you to change locale file and see the change effect in real time.",
   "author": "Qinghuan <qinghuanhu@gmail.com>",
   "license": "MIT",
