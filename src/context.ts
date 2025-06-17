@@ -185,7 +185,12 @@ export class VitepluginI18nDevContext {
         for (const locale of localesKeys) {
           const localPath = path.join(this.root, localPathItem.locales[locale])
           const jsonData = await this.getI18nData(localPath)
-          deleteByPath(jsonData, fullKey);
+
+          if(localPathItem.flatKey) {
+            delete jsonData[fullKey]
+          } else {
+            deleteByPath(jsonData, fullKey);
+          }
           await this.writeI18nData(localPath, jsonData)
         }
         this.initI18nData(this.root)

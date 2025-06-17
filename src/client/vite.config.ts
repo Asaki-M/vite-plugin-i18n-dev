@@ -4,7 +4,7 @@ import { resolve, join } from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
-// import VitePluginI18nDev from '../'
+import VitePluginI18nDev from '../'
 
 export default defineConfig({
   base: './',
@@ -21,6 +21,24 @@ export default defineConfig({
       dirs: ['./src/components'],
       dts: join(__dirname, 'components.d.ts'),
     }),
+    VitePluginI18nDev({
+      dirs: [
+        {
+          name: 'global',
+          locales: {
+            zh: './src/locales/zh-CN.json',
+            en: './src/locales/en-US.json',
+          }
+        }, 
+        {
+          name: 'menu',
+          locales: {
+            zh: './src/locales/zh-CN.menu.json',
+            en: './src/locales/en-US.menu.json',
+          }
+        }
+      ]
+    })
   ],
   resolve: {
     alias: {

@@ -31,34 +31,34 @@ const columns = computed(() => {
     },
   ]
 
-  // Find locales by looking at the first item with language properties
+  // Find locales by recursively searching through the tree structure
   const findLocales = () => {
-    for (const item of props.treeData) {
-      // Check direct properties that are not standard TreeItem fields
-      const locales = Object.keys(item).filter(key =>
-        !filterKeys.includes(key) &&
-        typeof item[key] === 'string'
-      );
-
-      if (locales.length > 0) {
-        return locales;
-      }
-
-      // Check children if no direct properties
-      if (item.children) {
-        for (const child of item.children) {
-          const childLocales = Object.keys(child).filter(key =>
+    const searchLocales = (items: TreeItem[]): string[] => {
+      for (const item of items) {
+        // Check if current item has locale properties (leaf nodes)
+        if (!item.children) {
+          const locales = Object.keys(item).filter(key =>
             !filterKeys.includes(key) &&
-            typeof child[key] === 'string'
+            typeof item[key] === 'string'
           );
 
+          if (locales.length > 0) {
+            return locales;
+          }
+        }
+
+        // Recursively search in children
+        if (item.children) {
+          const childLocales = searchLocales(item.children);
           if (childLocales.length > 0) {
             return childLocales;
           }
         }
       }
-    }
-    return [];
+      return [];
+    };
+
+    return searchLocales(props.treeData);
   }
 
   const locales = findLocales();
@@ -75,21 +75,32 @@ const columns = computed(() => {
 })
 
 const locales = computed(() => {
-  let treeItem = props.treeData?.[0]
+  const findFirstLeafNode = (items: TreeItem[]): TreeItem | null => {
+    for (const item of items) {
+      if (!item.children) {
+        return item;
+      }
+      if (item.children) {
+        const leafNode = findFirstLeafNode(item.children);
+        if (leafNode) {
+          return leafNode;
+        }
+      }
+    }
+    return null;
+  };
 
-  if (treeItem?.children) {
-    treeItem = treeItem.children[0]
+  const leafNode = findFirstLeafNode(props.treeData);
+
+  if (!leafNode) {
+    return [];
   }
 
-  if (!treeItem) {
-    return []
-  }
-
-  const locales = Object.keys(treeItem).filter(key =>
+  const locales = Object.keys(leafNode).filter(key =>
     !filterKeys.includes(key) &&
-    typeof treeItem[key] === 'string'
+    typeof leafNode[key] === 'string'
   );
-  return locales
+  return locales;
 })
 
 
@@ -97,6 +108,8 @@ const addNewKeyModalRef = ref<InstanceType<typeof AddNewKeyDialog> | null>(null)
 const dataSource = ref<TreeItem[]>(props.treeData);
 const buttons = ref(new Map())
 const tableRef = ref()
+// use to refresh table component
+const tableKey = ref(0)
 
 watch(() => props.treeData, (newVal) => {
   dataSource.value = newVal.sort((a, b) => a.children ? 1 : b.children ? -1 : 0);
@@ -112,6 +125,8 @@ watch(() => props.treeData, (newVal) => {
       isAdded = true
     }
   }
+
+  tableKey.value++
 })
 
 const localeKeyEditCellData: Record<string, boolean> = reactive({})
@@ -179,9 +194,9 @@ const handleSearchClear = () => {
     <SearchDropdown :origin-data="dataSource" @select="handleSearchSelect" @clear="handleSearchClear" />
   </div>
 
-  <s-table v-if="dataSource.length > 0" class="w-full h-full" ref="tableRef" bordered :data-source="dataSource" :columns="columns"
-    :pagination="false" expandRowByClick :scroll="{ y: 600 }" :sticky="{ offsetHeader: 64 }"
-    :defaultExpandAllRows="true"
+  <s-table v-if="dataSource.length > 0" :key="tableKey" class="w-full h-full" ref="tableRef" bordered
+    :data-source="dataSource" :columns="columns" :pagination="false" expandRowByClick :scroll="{ y: 600 }"
+    :sticky="{ offsetHeader: 64 }" defaultExpandAllRows
     :rowClassName="(record: TreeItem) => record.fullKey === highlightRowKey ? '!bg-sky-100' : ''">
     <template #bodyCell="{ column, record }">
       <template v-if="column.dataIndex === 'action'">
